@@ -9,7 +9,7 @@ const AuthForm = () => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const authCtx = useContext(CartContext)
-  const { login } = authCtx.contextValue;
+  const { login, setEmail } = authCtx.contextValue;
   const [isLogin, setIsLogin] = useState(true);
   const [showError, setShowError] = useState("");
   const [signupInProgress, setSignupInProgress] = useState(false);
@@ -65,6 +65,8 @@ const AuthForm = () => {
       }).then((data) => {
         // console.log(data)
         login(data.idToken)
+        // console.log('data email is ',data.email)
+        setEmail(data.email)
         history.replace('/shop')
       }).catch((err) => {
         alert(err.message)
