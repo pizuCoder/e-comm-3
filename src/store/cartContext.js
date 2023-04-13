@@ -1,12 +1,10 @@
 // CartContext.js
 import React, { createContext, useReducer, useEffect, useState } from "react";
-// import { useHistory } from "react-router-dom";
 import axios from "axios";
-
-const crudLink =
-  "https://crudcrud.com/api/54cbe4a7cb0c462f998a7d094ca02979/cart";
-
+// import { useHistory } from "react-router-dom";
 export const CartContext = createContext();
+
+const crudLink = 'https://crudcrud.com/api/3ff7fb7366cd4e539c3e739bcbda8315/cart'
 
 const initialState = {
   items: [],
@@ -52,6 +50,9 @@ const cartReducer = (state, action) => {
         item.id === itemId ? { ...item, quantity } : item
       );
       return { ...state, items: updatedItemsArray };
+      case "LOAD_CART_ITEMS":
+        return { ...state, items: action.payload };
+
     default:
       return state;
   }
@@ -60,38 +61,70 @@ const cartReducer = (state, action) => {
 export const CartProvider = ({ children }) => {
   // const [cartData, setCartData] = useState([]);
   const initialToken = localStorage.getItem("token");
-  
   const [token, setToken] = useState(initialToken);
   const userIsLoggedIn = !!token;
   const [email, setEmail] = useState("");
-  const [cartState, dispatch] = useReducer(cartReducer, initialState);
+  const [cartState, dispatch] = useReducer(cartReducer, initialState) ;
 
-  const addToCart = (item) => {
-    dispatch({ type: "ADD_ITEM", payload: item });
+
+  // async function addToCart(item, email){
+  //   try {
+  //     const res = await axios.post(`${crudLink}${email.replace(/[.@]/g, "")}`, item);
+  //     dispatch({ type: "ADD_ITEM", payload: res.data });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  async function addToCart(item, email){
+    try {
+      const res = await axios.post(`${crudLink}${email.replace(/[.@]/g, "")}`, item);
+      dispatch({ type: "ADD_ITEM", payload: res.data });
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  async function loadCartItems(email) {
+    try {
+      const res = await axios.get(`${crudLink}${email.replace(/[.@]/g, "")}`);
+      dispatch({ type: "LOAD_CART_ITEMS", payload: res.data });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  
+    
+  
 
   const removeFromCart = (itemId) => {
     dispatch({ type: "REMOVE_ITEM", payload: itemId });
+    
   };
 
   const clearCart = () => {
     dispatch({ type: "CLEAR_ITEMS" });
+    
   };
 
   const updateQuantity = (itemId, quantity) => {
     dispatch({ type: "UPDATE_QUANTITY", payload: { itemId, quantity } });
+    
   };
 
   
 
-  const loginHandler = (token) => {
+  const loginHandler = (token, email) => {
     setToken(token);
     localStorage.setItem("token", token);
+    localStorage.setItem("email", email)
+
   };
 
   const logoutHandler = () => {
     setToken(null);
     localStorage.removeItem("token");
+
   };
 
   useEffect(() => {
@@ -117,9 +150,20 @@ export const CartProvider = ({ children }) => {
     }
   }, [userIsLoggedIn]);
 
+  
   const setEmailHandler = (email) => {
     setEmail(email);
+    localStorage.setItem("email", email)
+    
+    
   };
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("email");
+    if (storedEmail) {
+      loadCartItems(storedEmail);
+    }
+  }, []);
+  
 
   const contextValue = {
     token: token,
@@ -130,40 +174,45 @@ export const CartProvider = ({ children }) => {
     setEmail: setEmailHandler,
   };
 
-  useEffect(() => {
-    const postCartData = async (cartState, email) => {
-      try {
-        const response = await axios.post(crudLink, { email, cartState });
-        // console.log(response);
-        return response
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    if (cartState.items.length > 0) {
-      postCartData(cartState, email);
-    }
-  }, [cartState, email]);
+  
 
-  const getCartData = async (email) => {
-    try {
-      const response = await axios.get(`${crudLink}?email=${email}`);
-      console.log(response.data);
-      console.log('current cart state: ', cartState.items)
-      // setCartData(response.data);
-      // console.log(response.data[response.data.length-1].cartState.items)
-      // return response.data
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  
 
-  if (contextValue.isLoggedIn) {
-    getCartData(contextValue.email);
-  }
+  // useEffect(() => {
+  //   const postCartData = async (cartState, email) => {
+  //     try {
+  //       const response = await axios.post(crudLink, { email, cartState });
+  //       // console.log(response);
+  //       return response;
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+  //   if (cartState.items.length > 0) {
+  //     postCartData(cartState, email);
+  //   }
+  // }, [cartState, email]);
+
+  // const getCartData = async (email) => {
+  //   try {
+  //     const response = await axios.get(`${crudLink}?email=${email}`);
+  //     console.log(response.data);
+  //     console.log("current cart state: ", cartState.items);
+  //     // setCartData(response.data);
+  //     // console.log(response.data[response.data.length-1].cartState.items)
+  //     // return response.data
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  // if (contextValue.isLoggedIn) {
+  //   getCartData(contextValue.email);
+  // }
   // console.log(contextValue.isLoggedIn)
 
   // console.log('email is ', contextValue.email)
+  
 
   return (
     <CartContext.Provider

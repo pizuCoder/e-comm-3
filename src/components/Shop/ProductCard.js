@@ -4,8 +4,10 @@ import Card from 'react-bootstrap/Card';
 import { CartContext } from '../../store/cartContext';
 
 function ProductCard(props) {
-  const { addToCart } = useContext(CartContext);
-  const { cartState } = useContext(CartContext);
+  const { addToCart, cartState } = useContext(CartContext);
+  const authCtx = useContext(CartContext);
+  const {email} = authCtx.contextValue
+
   const { items } = cartState;
   const currentItem = items.find((item) => item.id === props.id);
 
@@ -31,7 +33,8 @@ function ProductCard(props) {
       price: props.price,
       imageUrl: props.imageUrl,
       quantity: quantity,
-    });
+      
+    }, email);
     // Reset the display value
     setQuantity(0);
   };

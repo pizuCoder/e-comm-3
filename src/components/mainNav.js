@@ -20,7 +20,7 @@ function MainNav() {
   };
     return (
       <>
-        <Navbar bg="dark" variant="dark">
+        <Navbar bg="dark" variant="dark" sticky="top">
           <Container>
             <Navbar.Brand href="/">The COLOR STORE</Navbar.Brand>
             {isLoggedIn && <Nav className="me-auto">
