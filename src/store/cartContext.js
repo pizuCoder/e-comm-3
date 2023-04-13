@@ -5,7 +5,7 @@ import axios from "axios";
 export const CartContext = createContext();
 
 const crudLink =
-  "https://crudcrud.com/api/3ff7fb7366cd4e539c3e739bcbda8315/cart";
+  "https://crudcrud.com/api/93d47f9a08b743e7b34cde96caa780c9/cart";
 
 const initialState = {
   items: [],
@@ -64,8 +64,10 @@ export const CartProvider = ({ children }) => {
   const initialToken = localStorage.getItem("token");
   const [token, setToken] = useState(initialToken);
   const userIsLoggedIn = !!token;
-  const [email, setEmail] = useState("");
+  const storedEmail = localStorage.getItem("email");
+  const [email, setEmail] = useState(storedEmail);
   const [cartState, dispatch] = useReducer(cartReducer, initialState);
+  
 
   // async function addToCart(item, email){
   //   try {
@@ -76,7 +78,7 @@ export const CartProvider = ({ children }) => {
   //   }
   // };
 
-  async function addToCart(item, email) {
+  async function addToCart(item) {
     try {
       const res = await axios.post(
         `${crudLink}${email.replace(/[.@]/g, "")}`,
@@ -96,11 +98,20 @@ export const CartProvider = ({ children }) => {
       console.log(error);
     }
   }
+  loadCartItems()
 
-  const removeFromCart = (itemId) => {
-    dispatch({ type: "REMOVE_ITEM", payload: itemId });
+  // const removeFromCart = (itemId) => {
+  //   dispatch({ type: "REMOVE_ITEM", payload: itemId });
+  // };
+  const removeFromCart = async (id, _id) => {
+    try {
+      await axios.delete(`${crudLink}${email.replace(/[.@]/g, "")}/${_id}`);
+      dispatch({ type: "REMOVE_ITEM", payload: id });
+    } catch (error) {
+      console.log(error);
+    }
   };
-
+  
   const clearCart = () => {
     dispatch({ type: "CLEAR_ITEMS" });
   };
@@ -111,6 +122,7 @@ export const CartProvider = ({ children }) => {
 
   const loginHandler = (token, email) => {
     setToken(token);
+    // setEmail(email)
     localStorage.setItem("token", token);
     localStorage.setItem("email", email);
   };
@@ -147,12 +159,12 @@ export const CartProvider = ({ children }) => {
     setEmail(email);
     localStorage.setItem("email", email);
   };
+  
   useEffect(() => {
-    const storedEmail = localStorage.getItem("email");
     if (storedEmail) {
       loadCartItems(storedEmail);
     }
-  }, []);
+  }, [storedEmail]);
 
   const contextValue = {
     token: token,

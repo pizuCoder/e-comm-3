@@ -23,7 +23,7 @@ export default function CartModal() {
       <p >{item.price}</p>
       <p >{item.quantity}</p>
       <Button onClick={() => 
-        removeFromCart(item.id)}>Clear</Button>
+        removeFromCart(item.id, item._id)}>Clear</Button>
     </div>
   )
   }
