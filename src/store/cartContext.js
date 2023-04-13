@@ -4,7 +4,8 @@ import axios from "axios";
 // import { useHistory } from "react-router-dom";
 export const CartContext = createContext();
 
-const crudLink = 'https://crudcrud.com/api/3ff7fb7366cd4e539c3e739bcbda8315/cart'
+const crudLink =
+  "https://crudcrud.com/api/3ff7fb7366cd4e539c3e739bcbda8315/cart";
 
 const initialState = {
   items: [],
@@ -50,8 +51,8 @@ const cartReducer = (state, action) => {
         item.id === itemId ? { ...item, quantity } : item
       );
       return { ...state, items: updatedItemsArray };
-      case "LOAD_CART_ITEMS":
-        return { ...state, items: action.payload };
+    case "LOAD_CART_ITEMS":
+      return { ...state, items: action.payload };
 
     default:
       return state;
@@ -64,8 +65,7 @@ export const CartProvider = ({ children }) => {
   const [token, setToken] = useState(initialToken);
   const userIsLoggedIn = !!token;
   const [email, setEmail] = useState("");
-  const [cartState, dispatch] = useReducer(cartReducer, initialState) ;
-
+  const [cartState, dispatch] = useReducer(cartReducer, initialState);
 
   // async function addToCart(item, email){
   //   try {
@@ -76,14 +76,17 @@ export const CartProvider = ({ children }) => {
   //   }
   // };
 
-  async function addToCart(item, email){
+  async function addToCart(item, email) {
     try {
-      const res = await axios.post(`${crudLink}${email.replace(/[.@]/g, "")}`, item);
+      const res = await axios.post(
+        `${crudLink}${email.replace(/[.@]/g, "")}`,
+        item
+      );
       dispatch({ type: "ADD_ITEM", payload: res.data });
     } catch (error) {
       console.log(error);
     }
-  };
+  }
 
   async function loadCartItems(email) {
     try {
@@ -93,38 +96,28 @@ export const CartProvider = ({ children }) => {
       console.log(error);
     }
   }
-  
-    
-  
 
   const removeFromCart = (itemId) => {
     dispatch({ type: "REMOVE_ITEM", payload: itemId });
-    
   };
 
   const clearCart = () => {
     dispatch({ type: "CLEAR_ITEMS" });
-    
   };
 
   const updateQuantity = (itemId, quantity) => {
     dispatch({ type: "UPDATE_QUANTITY", payload: { itemId, quantity } });
-    
   };
-
-  
 
   const loginHandler = (token, email) => {
     setToken(token);
     localStorage.setItem("token", token);
-    localStorage.setItem("email", email)
-
+    localStorage.setItem("email", email);
   };
 
   const logoutHandler = () => {
     setToken(null);
     localStorage.removeItem("token");
-
   };
 
   useEffect(() => {
@@ -150,12 +143,9 @@ export const CartProvider = ({ children }) => {
     }
   }, [userIsLoggedIn]);
 
-  
   const setEmailHandler = (email) => {
     setEmail(email);
-    localStorage.setItem("email", email)
-    
-    
+    localStorage.setItem("email", email);
   };
   useEffect(() => {
     const storedEmail = localStorage.getItem("email");
@@ -163,7 +153,6 @@ export const CartProvider = ({ children }) => {
       loadCartItems(storedEmail);
     }
   }, []);
-  
 
   const contextValue = {
     token: token,
@@ -173,10 +162,6 @@ export const CartProvider = ({ children }) => {
     email,
     setEmail: setEmailHandler,
   };
-
-  
-
-  
 
   // useEffect(() => {
   //   const postCartData = async (cartState, email) => {
@@ -212,7 +197,6 @@ export const CartProvider = ({ children }) => {
   // console.log(contextValue.isLoggedIn)
 
   // console.log('email is ', contextValue.email)
-  
 
   return (
     <CartContext.Provider

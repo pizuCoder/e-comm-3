@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { CartContext } from '../../store/cartContext';
+// import { useHistory } from 'react-router-dom';
 
 function ProductCard(props) {
   const { addToCart, cartState } = useContext(CartContext);
@@ -38,10 +39,9 @@ function ProductCard(props) {
     // Reset the display value
     setQuantity(0);
   };
-
   return (
-    <Card style={{ width: '18rem' }}>
-      <Card.Img variant="top" src={props.imageUrl} />
+    <Card style={{ width: '18rem', padding: '.5rem'}}>
+      <Card.Img variant="top" src={props.imageUrl} style={{objectFit: 'cover'}}/>
       <Card.Body>
         <Card.Title>{props.title}</Card.Title>
         <Card.Text>
@@ -57,9 +57,12 @@ function ProductCard(props) {
             +
           </Button>
         </div>
-        <Button variant="primary" onClick={handleAddToCart}>
+        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        <Button variant="primary" onClick={handleAddToCart} >
           Add to Cart
         </Button>
+        <a href={props.productLink}><Button>See Product</Button></a>
+        </div>
       </Card.Body>
     </Card>
   );

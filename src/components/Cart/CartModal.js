@@ -6,12 +6,13 @@ import { CartContext } from '../../store/cartContext';
 
 export default function CartModal() {
   const [show, setShow] = useState(false);
-  const { cartState, removeFromCart } = useContext(CartContext);
+  const { cartState, removeFromCart} = useContext(CartContext);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const totalItems = cartState.items.reduce((total, item) => total + item.quantity, 0);
+  const totalPrice = cartState.items.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
 
   const cartItems = cartState.items.map((item) => {
     // console.log(item.imageUrl)
@@ -21,7 +22,8 @@ export default function CartModal() {
       <p >{item.title}</p>
       <p >{item.price}</p>
       <p >{item.quantity}</p>
-      <Button onClick={() => removeFromCart(item.id)}>Clear All</Button>
+      <Button onClick={() => 
+        removeFromCart(item.id)}>Clear</Button>
     </div>
   )
   }
@@ -48,6 +50,7 @@ export default function CartModal() {
           {cartItems}
         </Modal.Body>
         <Modal.Footer>
+          <p>Your total is: <span>{totalPrice}</span></p>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
