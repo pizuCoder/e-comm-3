@@ -1,13 +1,12 @@
-# Expense Tracker Project
+# Ecommerce Website Project
 This is a project made as part of React assignment for Sharpener placement course.
-🔗[Live Demo](https://expense-tracker-seven-zeta.vercel.app/)
+
 ### Features:
-1. Daily Expense Page: 
-    - Can add, edit and delete expenses
-    - All expenses are user specific
-    - a premieum fature is activated when the expenses go beyond 10000 where user can download expenses as .csv file and change theme
-2. Profile Page:
-    - User can enter their desired username and url for profile pic
-    - Details can be updated anytime
-3. Verify email:
-    user can verify their email address which happens using firebase auth
+1. Shop 
+    - Can add and delete products
+    - All carts are user specific
+    - the REST endpoint expires in a day and needs to be updated everytime
+2. Contact Us:
+    - User can enter their contact details which are saved in a firebase db
+    
+
